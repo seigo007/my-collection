@@ -1,0 +1,5 @@
+sql.js 1.13.0 — asm.js distribution
+Source: https://cdn.jsdelivr.net/npm/sql.js@1.13.0/dist/sql-asm.js
+Upstream: https://github.com/sql-js/sql.js
+License: MIT (see LICENSE)
+Bundled for offline/file:// classroom use.
