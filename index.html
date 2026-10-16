@@ -1,0 +1,104 @@
+<!doctype html>
+<!-- Ver3.0版 -->
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>マイ図鑑 | MY COLLECTION</title>
+  <meta name="description" content="好きなものを集めて、探して、紹介する。HTML・CSS・JavaScript・SQLiteで作るマイ図鑑。">
+  <link rel="stylesheet" href="css/style.css">
+  <script defer src="assets/vendor/sql-asm.js"></script>
+  <script defer src="data/collection-data.js"></script>
+  <script defer src="js/db.js"></script>
+  <script defer src="js/app.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#collection-grid">コレクションへ移動</a>
+<header class="topbar">
+  <a class="brand" href="index.html" aria-label="マイ図鑑の先頭へ"><span class="brand-mark" aria-hidden="true">▥</span> MY COLLECTION <small>LAB</small></a>
+  <button id="open-lab" class="button button-outline" type="button" disabled><span aria-hidden="true">⌘</span> SQL実験室</button>
+</header>
+
+<main class="page">
+  <section class="hero" aria-labelledby="collection-title">
+    <div class="hero-copy">
+      <p class="eyebrow">COLLECT YOUR FAVORITES</p>
+      <!-- Day 1：タイトルと説明も、自分の言葉に変更できます。 -->
+      <h1 id="collection-title">マイ図鑑</h1>
+      <p id="collection-subtitle">好きなものを集めて、自分だけのコレクションを作ろう。</p>
+      <div class="hero-stats"><span><strong id="total-count">—</strong> コレクション</span><span><strong id="category-count">—</strong> 分類</span><span class="local-tag"><i aria-hidden="true"></i> この端末のデータ</span></div>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <div class="art-ring"></div><div class="art-dot dot-a"></div><div class="art-dot dot-b"></div>
+      <img class="mini-card mini-one" src="assets/book.svg" alt=""><img class="mini-card mini-two" src="assets/game.svg" alt=""><img class="mini-card mini-three" src="assets/music.svg" alt="">
+      <span class="art-caption">MY FAVORITES ✦</span>
+    </div>
+  </section>
+
+  <!-- TODO D1-A: 紹介欄を作る -->
+
+  <div id="startup-message" class="notice" role="status">SQLiteを準備しています…</div>
+  <div id="save-status" class="save-status" role="status" aria-live="polite"></div>
+
+  <div class="workspace">
+    <section class="collection-panel" aria-labelledby="list-title">
+      <div class="section-heading"><div><p class="eyebrow">THE COLLECTION</p><h2 id="list-title">好きなものを見つけよう</h2></div><span id="result-count" class="count-label"></span></div>
+      <div class="search-row">
+        <label class="search-box"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="タイトル・メモから探す" aria-label="タイトル・メモから検索"></label>
+        <label class="filter-label"><span class="sr-only">分類で絞り込み</span><select id="category-filter"><option value="">すべての分類</option></select></label>
+        <label class="filter-label"><span class="sr-only">並べ替え</span><select id="sort-order"><option value="newest">新しい順</option><option value="rating">おすすめ順</option><option value="title">タイトル順</option></select></label>
+      </div>
+      <!-- TODO D3-A: 絞り込みチェックボックス -->
+      <div id="collection-grid" class="collection-grid" tabindex="-1"></div>
+      <div id="empty-state" class="empty-state" hidden><span aria-hidden="true">▧</span><h3>まだ見つかりませんでした</h3><p>検索条件を変えるか、好きなものを登録してみよう。</p><button id="clear-filters" class="button button-outline" type="button">検索条件をクリア</button></div>
+    </section>
+
+    <aside class="editor-panel" aria-labelledby="form-title">
+      <div class="section-heading"><div><p class="eyebrow">ADD YOUR FAVORITE</p><h2 id="form-title">コレクションに追加</h2></div><span class="form-plus" aria-hidden="true">＋</span></div>
+      <form id="item-form">
+        <fieldset id="form-fields" disabled>
+          <label for="item-title">タイトル <span class="required">必須</span></label>
+          <input id="item-title" name="title" required maxlength="80" placeholder="例：お気に入りの一冊" autocomplete="off">
+          <label for="item-category">分類 <span class="required">必須</span></label>
+          <input id="item-category" name="category" required maxlength="30" placeholder="例：本・ゲーム・音楽" list="category-suggestions" autocomplete="off"><datalist id="category-suggestions"></datalist>
+          <label for="item-rating">おすすめ度 <output id="rating-output" for="item-rating">★★★☆☆</output></label>
+          <input id="item-rating" name="rating" type="range" min="1" max="5" value="3" step="1"><div class="range-labels"><span>1　気になる</span><span>5　とても好き</span></div>
+          <label for="item-note">メモ</label><textarea id="item-note" name="note" rows="3" maxlength="500" placeholder="どんなところが好き？（500文字まで）"></textarea>
+          <label for="item-cover">カバー</label><select id="item-cover" name="cover"><option value="book">本 / Book</option><option value="game">ゲーム / Game</option><option value="music">音楽 / Music</option><option value="camera">カメラ / Camera</option><option value="nature">自然 / Nature</option><option value="space">宇宙 / Space</option></select>
+          <p id="form-error" class="form-error" role="alert"></p>
+          <button id="submit-item" class="button button-primary button-full" type="submit">登録する</button>
+          <button id="cancel-edit" class="button button-quiet button-full" type="button" hidden>編集をやめる</button>
+        </fieldset>
+      </form>
+      <p class="mini-note">架空の題材や公開できる内容で作ろう。<br>氏名・連絡先などの個人情報は入力しません。</p>
+    </aside>
+  </div>
+
+  <section class="data-panel" aria-labelledby="data-title">
+    <div><p class="eyebrow">KEEP & SHARE</p><h2 id="data-title">データを持ち帰る・公開する</h2><p>授業の終わりには「SQLiteを保存」。公開する内容は「公開用データを書き出す」で準備します。</p></div>
+    <div class="data-actions">
+      <button id="export-db" class="button button-outline" type="button" disabled>SQLiteを保存</button>
+      <button id="import-db" class="button button-outline" type="button" disabled>SQLiteを読み込む</button>
+      <button id="export-public" class="button button-primary" type="button" disabled>公開用データを書き出す</button>
+      <button id="reset-data" class="button button-quiet" type="button" disabled>配布データに戻す</button>
+    </div>
+    <input id="db-file" type="file" accept=".sqlite,.sqlite3,.db" hidden>
+    <p class="data-note"><strong>公開のしくみ</strong>　書き出した <code>collection-data.js</code> を自分の <code>data</code> フォルダに置き換え、ソースと一緒にGitHubへアップロードします。ブラウザでの変更だけでは、GitHubや他の端末のデータは更新されません。</p>
+  </section>
+  <footer class="footer"><span>MY COLLECTION LAB · Ver3.0版</span><span>岐阜協立大学 × 岐阜県立大垣商業高等学校</span></footer>
+</main>
+
+<dialog id="sql-dialog" aria-labelledby="lab-title">
+  <div class="dialog-header"><div><p class="eyebrow">SQL PLAYGROUND</p><h2 id="lab-title">SQL実験室</h2></div><button id="close-lab" class="icon-button" type="button" aria-label="SQL実験室を閉じる">×</button></div>
+  <p class="lab-notice"><strong>ここは固定6件の練習用DBです。</strong> 実行してもコレクション本体は変わりません。「練習DBを戻す」で最初の6件に戻せます。本体で登録した内容はここには入りません。</p>
+  <div class="lab-reference"><span>テーブル <strong>items</strong></span><code>id / title / category / rating / note / cover</code></div>
+  <label class="sql-label" for="sql-editor">SQLを書いてみよう <span>Ctrl + Enter で実行</span></label>
+  <textarea id="sql-editor" spellcheck="false" rows="7">SELECT id, title FROM items;</textarea>
+  <div class="lab-actions"><button id="run-sql" class="button button-primary" type="button">SQLを実行</button><button id="load-sql" class="button button-outline" type="button">.sqlファイルを読み込む</button><button id="reset-lab" class="button button-quiet" type="button">練習DBを戻す</button><input id="sql-file" type="file" accept=".sql,text/plain" hidden></div>
+  <p id="sql-message" class="sql-message" role="status" aria-live="polite">固定の6件を使って練習します。まずは「SQLを実行」を押してみよう。</p>
+  <div id="sql-results" class="sql-results"></div>
+  <p class="mini-note">SELECTは取り出す、INSERTは追加する、UPDATEは変更する、DELETEは削除する命令です。<br>UPDATE・DELETEは、まずWHEREで対象を確認しよう。<br>閉じて開き直すと練習中の変更は残ります。ページを再読み込みすると初期化されます。</p>
+</dialog>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>
